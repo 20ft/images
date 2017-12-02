@@ -1,0 +1,15 @@
+[Unit]
+Description=20ft.nz mail server
+
+[Service]
+Type=simple
+ExecStart=/home/admin/mail-server 20ft.nz mail_20ft users
+KillSignal=SIGINT
+WorkingDirectory=/home/admin/
+TimeoutStopSec=5
+Restart=always
+User=admin
+Group=admin
+
+[Install]
+WantedBy=multi-user.target
