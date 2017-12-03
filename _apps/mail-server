@@ -2,9 +2,10 @@
 import sys
 from tfnz.cli import base_argparse
 from tfnz.location import Location
-from mail import Mail
+from tfnz.components.mail import Mail
 
 parser = base_argparse('mail-server')
+parser.add_argument('-s', help='open ssh server', action='store_true')
 parser.add_argument('domain', help='The domain name of the mailserver')
 parser.add_argument('volume', help='The volume (tag) to use for persistent storage')
 parser.add_argument('userfile', help='Name of the file that holds user:password pairs')
@@ -15,6 +16,5 @@ with open(args.userfile) as f:
 
 loc = Location(args.location, location_ip=args.local)
 vol = loc.volume(args.volume)
-m = Mail(args.domain, users)
+m = Mail(args.domain, users, ssh=args.s)
 m.go(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()), local_smtp=2525, local_imap=1993)
-
