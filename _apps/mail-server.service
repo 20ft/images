@@ -3,7 +3,7 @@ Description=20ft.nz mail server
 
 [Service]
 Type=simple
-ExecStart=/home/admin/mail-server 20ft.nz mail_20ft users
+ExecStart=/home/admin/mail-server --dkim 20ft.nz mail_20ft users
 KillSignal=SIGINT
 WorkingDirectory=/home/admin/
 TimeoutStopSec=5

@@ -67,6 +67,7 @@ begin transports
 remote_smtp:
     driver = smtp
     hosts_try_prdr = *
+		{0.dkim_text}
 
 dovecot_lmtp:
     driver = lmtp
