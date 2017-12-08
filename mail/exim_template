@@ -16,6 +16,10 @@ check_rfc2047_length = false
 host_lookup = *
 daemon_smtp_ports = 25 : 465
 
+# note that all smtp connections appear to come from 10.1.0.1
+smtp_accept_max = 50
+smtp_accept_max_per_host = 50
+
 tls_advertise_hosts = *
 tls_certificate = /var/mail/server.pem
 tls_privatekey = /var/mail/server.key
