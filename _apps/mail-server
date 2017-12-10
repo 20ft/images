@@ -8,30 +8,16 @@ parser = base_argparse('mail-server')
 parser.add_argument('-s', help='Create ssh server on port 2222', action='store_true')
 parser.add_argument('--image', help='Specify an image other than "tfnz/mail"')
 parser.add_argument('--dkim', help='Use DKIM', action='store_true')
-parser.add_argument('--cert', help='Use this certificate:key for SSL (passed filenames)')
 parser.add_argument('domain', help='The domain name of the mailserver')
 parser.add_argument('volume', help='The volume (tag) to use for persistent storage')
 parser.add_argument('userfile', help='Name of the file that holds user:password pairs')
 args = parser.parse_args()
 
-cert_and_key = (None, None)
-
 with open(args.userfile) as f:
     users = f.readlines()
 
-if args.cert is not None:
-    parts = args.cert.split(':')
-    if len(parts) != 2:
-        print("Pass the certificate option as a certificate:key pair (using filenames)")
-        exit(1)
-    with open(parts[0]) as f:
-        cert = f.read()
-    with open(parts[1]) as f:
-        key = f.read()
-    cert_and_key = (cert, key)
-
-    loc = Location(args.location, location_ip=args.local)
-    vol = loc.volume(args.volume)
-    m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim, cert_and_key=cert_and_key, image=args.image)
-    m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
-            local_smtp=2525, local_smtps=1465, local_imap=1993)
+loc = Location(args.location, location_ip=args.local)
+vol = loc.volume(args.volume)
+m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim, image=args.image)
+m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
+        local_smtp=2525, local_smtps=1465, local_imap=1993)
