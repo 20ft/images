@@ -2,7 +2,7 @@
     
 primary_hostname = mail.{0.domain_name}
 qualify_domain = {0.domain_name}
-domainlist local_domains = {0.domain_name}
+domainlist local_domains = {0.domain_name}:*.{0.domain_name}
 domainlist relay_to_domains = 
 hostlist relay_from_hosts =
 
