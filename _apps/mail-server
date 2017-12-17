@@ -16,8 +16,11 @@ args = parser.parse_args()
 with open(args.userfile) as f:
     users = f.readlines()
 
-loc = Location(args.location, location_ip=args.local)
-vol = loc.volume(args.volume)
-m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim, image=args.image)
-m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
-        local_smtp=2525, local_smtps=1465, local_imap=1993)
+loc = Location(args.location, location_ip=args.local, debug_log=True)
+try:
+    vol = loc.volume(args.volume)
+    m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim, image=args.image)
+    m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
+            local_smtp=2525, local_smtps=1465, local_imap=1993)
+finally:
+    loc.disconnect()
