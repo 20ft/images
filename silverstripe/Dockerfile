@@ -7,7 +7,5 @@ COPY nginx.conf /etc/nginx/conf.d/
 
 COPY compose_install.sh /
 RUN /bin/sh compose_install.sh
-RUN rm /compose_install.sh
 RUN php /composer.phar create-project silverstripe/installer /silverstripe
 RUN cd /silverstripe ; php /composer.phar require silverstripe/postgresql
-RUN rm /silverstripe/install*
