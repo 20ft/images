@@ -21,10 +21,10 @@ class SilverStripe:
         :param log_callback: An optional callback for log messages -  signature (object, bytes)"""
         nodes = location.ranked_nodes()
 
-        # spawn database - logs itself
+        # spawn database
         self.db = Postgresql(nodes[0], sql_volume, log_callback=log_callback)
 
-        # spawn one webserver instance on each node
+        # spawn one webserver instance
         first_server = nodes[0].spawn_container('tfnz/silverstripe',
                                                 volumes=[(volume, '/site')],
                                                 sleep=True,
