@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+# Copyright (c) 2018 David Preece, All rights reserved.
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+import logging
+from tfnz.location import Location
+from tfnz.cli import base_argparse
+from tfnz.platforms.mezzanine import Mezzanine
+
+logging.basicConfig(level=logging.INFO)
+parser = base_argparse('mezzanine')
+parser.add_argument('app', help='Name of the app to run (in /app/)')
+parser.add_argument('fqdn', help='The fqdn to publish to')
+parser.add_argument('volume', help='The volume (tag) to use for persistent storage')
+parser.add_argument('image', help='The image to use as source')
+parser.add_argument('username', help='Admin user username')
+parser.add_argument('email', help='Admin user email')
+parser.add_argument('password', help='Admin user password')
+
+args = parser.parse_args()
+
+loc = Location()
+data_vol = loc.ensure_volume(args.volume + '_data')
+sql_vol = loc.ensure_volume(args.volume + '_sql')
+mezzanine = Mezzanine(loc, data_vol, sql_vol, args.fqdn, args.app, args.image,
+                      superuser=(args.username, args.email),
+                      log_callback=lambda _, d: print(d.decode(), end=''))
+mezzanine.change_password(args.username, args.password)
+loc.run()

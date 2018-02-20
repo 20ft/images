@@ -143,11 +143,8 @@ with open(args.userfile) as f:
     users = f.readlines()
 
 loc = Location(args.location, location_ip=args.local)
-try:
-    vol = loc.ensure_volume(args.volume)
-    m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim)
-    m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
-            local_smtp=2525, local_smtps=1465, local_imap=1993)
-    signal.pause()
-finally:
-    loc.disconnect()
+vol = loc.ensure_volume(args.volume)
+m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim)
+m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
+        local_smtp=2525, local_smtps=1465, local_imap=1993)
+loc.run()
