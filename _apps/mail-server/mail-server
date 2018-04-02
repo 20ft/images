@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys
-import signal
 import re
 from tfnz.cli import base_argparse
 from tfnz.location import Location
@@ -142,7 +141,7 @@ args = parser.parse_args()
 with open(args.userfile) as f:
     users = f.readlines()
 
-loc = Location(args.location, location_ip=args.local)
+loc = Location(location=args.location, location_ip=args.local)
 vol = loc.ensure_volume(args.volume)
 m = Mail(args.domain, users, ssh=args.s, dkim=args.dkim)
 m.spawn(loc, vol, log_callback=lambda c, s: sys.stdout.write(s.decode()),
