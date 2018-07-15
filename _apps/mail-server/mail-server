@@ -75,6 +75,7 @@ class Mail:
                 container.run_process('openssl genrsa -out /var/mail/dkim.key.pem 1024 -outform PEM')
                 container.run_process('openssl rsa -in /var/mail/dkim.key.pem'
                                       '            -out /var/mail/dkim.pub.pem -pubout -outform PEM')
+                container.run_process('openssl gendh -out /var/mail/dh.pem 2048')
                 container.put('/var/mail/dkim_selector', date.today().strftime('%Y%M%d').encode())
 
             # render the dkim configuration
@@ -114,7 +115,7 @@ class Mail:
         container.put('/etc/exim/exim.conf', exim_template.format(self).encode())
 
         # attach an SMTP tunnel and run exim
-        container.spawn_process('tail -f /var/log/exim/mainlog', data_callback=log_callback)
+        container.spawn_process('tail -f /var/log/exim/mainlog /var/log/dovecot.log', data_callback=log_callback)
         container.attach_tunnel(25, localport=local_smtp)
         container.attach_tunnel(465, localport=local_smtps)
         container.spawn_process('/usr/sbin/exim -bdf -q30m', data_callback=log_callback)
